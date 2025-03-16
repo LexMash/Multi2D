@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -11,10 +11,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Obstacles
+  - Players
+  - Bullets
+  - Ladders
   - 
   - 
   - 
@@ -41,3 +41,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 2527407715
+    locked: 0
+  - name: MainPlan
+    uniqueID: 1061596399
+    locked: 0
+  - name: Player
+    uniqueID: 994033097
+    locked: 0
+  - name: Foreground
+    uniqueID: 736265305
+    locked: 0
+  - name: UI
+    uniqueID: 529146267
+    locked: 0
+  m_RenderingLayers:
+  - Default
