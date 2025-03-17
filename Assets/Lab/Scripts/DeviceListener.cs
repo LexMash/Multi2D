@@ -5,6 +5,7 @@ using UnityEngine.InputSystem.Users;
 
 namespace Multi2D
 {
+    //[DefaultExecutionOrder(-5000)]
     public class DeviceListener : MonoBehaviour
     {
         private List<LocalMultiplayerInput> inputs = new List<LocalMultiplayerInput>();

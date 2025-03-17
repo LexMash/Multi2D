@@ -5,9 +5,9 @@ namespace Multi2D
     [SerializeField]
     public struct PlayerStateStruct
     {
-        public SimpleVector2Struct Velocity;
+        public int Coins;
         public SimpleVector2Struct Position;
-        public PlayerStateBase State;
+        public PlayerStateType State;
         public LookDirection LookDirection;        
     }
 }
