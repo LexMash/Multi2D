@@ -2,6 +2,7 @@
 {
     public enum CollisionLayerType
     {
+        None,
         Obstacles,
         Bullets,
         Coins,

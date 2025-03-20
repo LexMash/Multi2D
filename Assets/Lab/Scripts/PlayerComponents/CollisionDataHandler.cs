@@ -1,5 +1,6 @@
 ﻿using Multi2D.Data;
 using Multi2D.Data.Collisions;
+using Multi2D.Extensions;
 using R3;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,16 @@ namespace Multi2D.PlayerComponents
     {
         private readonly CollisionDetector detector;
         private readonly ReactiveProperty<CollisionStruct> collisionData;
-        private readonly Dictionary<LayerMask, CollisionLayerType> collisionLayersMap = new();
+        private readonly Dictionary<int, CollisionLayerType> collisionLayersMap = new();
         public Observable<CollisionStruct> OnCollisionUpdated => collisionData;
 
         public CollisionDataHandler(CollisionDetector detector, ICollisionsConfig config)
         {
             this.detector = detector;
             collisionData = new();
-            foreach (var layer in config.CollisionLayers)
-                collisionLayersMap.Add(layer.Mask, layer.Type);
+
+            foreach (CollisionLayerMask layer in config.CollisionLayers)
+                collisionLayersMap.Add(layer.Mask.value, layer.Type);
 
             detector.OnCollision += OnCollision;
             detector.OnTrigger += OnTrigger;
@@ -33,18 +35,26 @@ namespace Multi2D.PlayerComponents
             collisionLayersMap.Clear();
         }
 
-        private void OnTrigger(Collider2D collider, CollisionDirectionType direction)
+        private void OnTrigger(Collider2D collider, CollisionDirectionType direction) => collisionData.Value = new()
         {
-            CollisionStruct collisionStruct = new() { Collider = collider, Direction = direction };
+            Collider = collider,
+            Direction = direction,
+            Collision = null,
+            Layer = GetCollisionLayerType(collider.gameObject)
+        };
 
-            collisionData.Value = collisionStruct;
-        }
-
-        private void OnCollision(Collision2D collision, CollisionDirectionType direction)
+        private void OnCollision(Collision2D collision, CollisionDirectionType direction) => collisionData.Value = new()
         {
-            CollisionStruct collisionStruct = new() { Collision = collision, Direction = direction };
+            Collision = collision,
+            Direction = direction,
+            Collider = collision.collider,
+            Layer = GetCollisionLayerType(collision.gameObject)
+        };
 
-            collisionData.Value = collisionStruct;
+        private CollisionLayerType GetCollisionLayerType(GameObject gameObject)
+        {
+            collisionLayersMap.TryGetValue(gameObject.ConvertGoLayerIndexToLayerMaskValue(), out CollisionLayerType layerType);
+            return layerType;
         }
     }
 }
