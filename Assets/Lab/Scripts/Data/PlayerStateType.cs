@@ -1,7 +1,10 @@
-﻿namespace Multi2D
+﻿using System;
+
+namespace Multi2D
 {
     public enum PlayerStateType : byte
     {
+        None,
         Idle,
         Run,
         Fire,

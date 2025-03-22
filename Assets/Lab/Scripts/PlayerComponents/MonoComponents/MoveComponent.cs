@@ -4,10 +4,10 @@ namespace Multi2D
 {
     public class MoveComponent : MonoBehaviour
     {
-        [SerializeField] private Transform target;
+        [SerializeField] private Transform targetTransform;
 
         private Vector3 velocity;
-        public Vector2 CurrentPosition => target.position;
+        public Vector2 CurrentPosition => targetTransform.position;
 
         public void SetVelocity(Vector2 velocity)
         {
@@ -16,9 +16,14 @@ namespace Multi2D
 
         private void Update()
         {
-            var position = target.position;
+            var position = targetTransform.position;
             position += velocity * Time.deltaTime;
-            target.position = position;
+            targetTransform.position = position;
+        }
+
+        private void Reset()
+        {
+            targetTransform = GetComponent<Transform>();
         }
     }
 }

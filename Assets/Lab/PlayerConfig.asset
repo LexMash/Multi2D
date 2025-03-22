@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d1037d40112c041964f8481a2f3da9, type: 3}
+  m_Name: PlayerConfig
+  m_EditorClassIdentifier: 
+  <Speed>k__BackingField: 5
+  <ClimbingSpeed>k__BackingField: 4
+  <InAirSpeedHorizontal>k__BackingField: 2
+  <JumpHeight>k__BackingField: 1
+  <JumpTime>k__BackingField: 0.5
+  <FireRateBPM>k__BackingField: 80
+  <BulletSpeed>k__BackingField: 2
+  <CollisionDetectionConfig>k__BackingField:
+    <OverlapBoxSize>k__BackingField: {x: 0.1, y: 0.1}
+    <OverlapOffset>k__BackingField: {x: 0, y: 0, z: 0}
+    <OverlapMask>k__BackingField:
+      serializedVersion: 2
+      m_Bits: 576
+    topCollisionLayers:
+    - DetectionMask: 2
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 64
+    - DetectionMask: 16
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 512
+    bottomCollisionLayers:
+    - DetectionMask: 1
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 64
+    - DetectionMask: 32
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 512
+    <ColliderContactCaptureLayers>k__BackingField:
+      serializedVersion: 2
+      m_Bits: 1280

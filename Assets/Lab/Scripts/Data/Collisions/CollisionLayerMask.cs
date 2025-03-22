@@ -6,7 +6,7 @@ namespace Multi2D.Data.Collisions
     [Serializable]
     public struct CollisionLayerMask
     {
-        public CollisionLayerType Type;
-        public LayerMask Mask;
+        public CollisionDetectionMask DetectionMask;
+        public LayerMask LayerMask;
     }
 }
