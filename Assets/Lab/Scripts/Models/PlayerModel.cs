@@ -7,18 +7,18 @@ namespace Multi2D.Data
     {
         private readonly ReactiveProperty<Vector2> position;
         private readonly ReactiveProperty<Vector2> velocity;
-        private readonly ReactiveProperty<LookDirection> lookDirection;
+        private readonly ReactiveProperty<int> lookDirection;
         private readonly ReactiveProperty<int> coins;
         private readonly ReactiveProperty<PlayerStateType> state;
 
         public int Id { get; private set; }
         public ReadOnlyReactiveProperty<Vector2> Position => position;
         public ReadOnlyReactiveProperty<Vector2> Velocity => velocity;
-        public ReadOnlyReactiveProperty<LookDirection> LookDirection => lookDirection;
+        public ReadOnlyReactiveProperty<int> LookDirection => lookDirection;
         public ReadOnlyReactiveProperty<int> Coins => coins;
         public ReadOnlyReactiveProperty<PlayerStateType> State => state;
 
-        public PlayerModel(int id, Vector2 initialPosition, LookDirection initialLookDirection)
+        public PlayerModel(int id, Vector2 initialPosition, int initialLookDirection)
         {
             position = new(initialPosition);
             velocity = new(Vector2.zero);
@@ -46,7 +46,7 @@ namespace Multi2D.Data
         }
 
         public void SetState(PlayerStateType newState) => state.Value = newState;
-        public void SetLookDirection(LookDirection newDirection) => lookDirection.Value = newDirection;
+        public void SetLookDirection(int newDirection) => lookDirection.Value = newDirection;
         public void SetPosition(Vector2 newPosition) => position.Value = newPosition;
         public void SetVelocity(Vector2 newVelocity) => velocity.Value = newVelocity;
     }

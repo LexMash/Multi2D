@@ -17,17 +17,17 @@ namespace Multi2D.States
             throw new System.NotImplementedException();
         }
 
-        public override void FirePerformed(bool active)
+        public void AttackPerformed(bool active)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void JumpPerformed(bool active)
+        public void JumpPerformed(bool active)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void MovePerformed(Vector2 normalizedDirection)
+        public void MovePerformed(Vector2 normalizedDirection)
         {
             throw new System.NotImplementedException();
         }

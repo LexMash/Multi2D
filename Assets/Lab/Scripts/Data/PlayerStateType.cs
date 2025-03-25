@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Multi2D
+﻿namespace Multi2D
 {
     public enum PlayerStateType : byte
     {

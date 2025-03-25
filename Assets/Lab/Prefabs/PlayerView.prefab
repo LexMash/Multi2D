@@ -41,7 +41,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4961918266076887285}
   - component: {fileID: 3869872795199293472}
-  - component: {fileID: 7279225163058217917}
   - component: {fileID: 1578710757180011460}
   m_Layer: 7
   m_Name: Visual
@@ -89,19 +88,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7279225163058217917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2330189728883928454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3275c5b961d8884dad6fc0af73d9cf6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 4961918266076887285}
 --- !u!114 &1578710757180011460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,7 +168,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.09000003, y: 0.91}
+  m_Offset: {x: 0.09, y: 0.91}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -192,7 +178,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.06, y: 1.8153117}
+  m_Size: {x: 1.06, y: 1.8}
   m_EdgeRadius: 0
 --- !u!114 &8512023332642567976
 MonoBehaviour:
@@ -219,6 +205,7 @@ GameObject:
   - component: {fileID: 3009378140550104234}
   - component: {fileID: 8998428994238577344}
   - component: {fileID: 2950064746951809057}
+  - component: {fileID: 4211052687925866337}
   m_Layer: 7
   m_Name: PlayerView
   m_TagString: Untagged
@@ -234,7 +221,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5384427715326554179}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -258,8 +245,9 @@ MonoBehaviour:
   <BulletSpawnRoot>k__BackingField: {fileID: 5828505170323827279}
   <AnimationController>k__BackingField: {fileID: 1578710757180011460}
   <MoveComponent>k__BackingField: {fileID: 8998428994238577344}
-  <FlipComponent>k__BackingField: {fileID: 7279225163058217917}
+  <FlipComponent>k__BackingField: {fileID: 4211052687925866337}
   <ObservableCollisionsDetector>k__BackingField: {fileID: 8512023332642567976}
+  dtStep: 0.5
   PlayerConfig: {fileID: 11400000, guid: 6a6d81f14b3105048a78e3d129166ccb, type: 2}
 --- !u!114 &8998428994238577344
 MonoBehaviour:
@@ -284,7 +272,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 5384427715326554179}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
@@ -300,7 +288,20 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 0
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
+--- !u!114 &4211052687925866337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5384427715326554179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3275c5b961d8884dad6fc0af73d9cf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 2577519108926598828}
 --- !u!1 &8142688605801740243
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ namespace Multi2D.Data
     {
         int Id { get; }
         ReadOnlyReactiveProperty<int> Coins { get; }
-        ReadOnlyReactiveProperty<LookDirection> LookDirection { get; }
+        ReadOnlyReactiveProperty<int> LookDirection { get; }
         ReadOnlyReactiveProperty<Vector2> Position { get; }
         ReadOnlyReactiveProperty<PlayerStateType> State { get; }
     }

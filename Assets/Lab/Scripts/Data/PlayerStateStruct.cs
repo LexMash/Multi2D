@@ -8,6 +8,6 @@ namespace Multi2D
         public int Coins;
         public SimpleVector2Struct Position;
         public PlayerStateType State;
-        public LookDirection LookDirection;        
+        public int LookDirection;        
     }
 }

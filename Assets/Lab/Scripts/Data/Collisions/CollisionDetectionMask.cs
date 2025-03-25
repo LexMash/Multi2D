@@ -10,7 +10,8 @@ namespace Multi2D.Data
         Right = 1 << 2,
         Left = 1 << 3,
         LadderUp = 1 << 4,
-        LadderDown = 1 << 5,
-        None = 1 << 6,
+        LadderDown = 1 << 5,       
+        Forward = 1 << 6,
+        None = 1 << 7,
     }
 }

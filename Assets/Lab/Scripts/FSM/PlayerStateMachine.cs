@@ -21,6 +21,7 @@ namespace Multi2D
         {
             stateChangeRequestNotifier.ChangeStateRequested += ChangeState;
             currentState ??= new PlayerMockState();
+            currentState.Enter();
         }
 
         public void SetState<T>() where T : PlayerFsmStateBase 
@@ -29,7 +30,7 @@ namespace Multi2D
         public void Update(float deltaTime) 
             => currentState.Update(deltaTime);
 
-        IPlayerStatesRegistrator IPlayerStatesRegistrator.RegisterState<T>(T state, bool isInitial)
+        public IPlayerStatesRegistrator RegisterState<T>(T state, bool isInitial = false) where T : PlayerFsmStateBase
         {
             statesMap[typeof(T)] = state;
 
