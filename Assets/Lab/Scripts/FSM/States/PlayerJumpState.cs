@@ -1,4 +1,5 @@
 ﻿using Multi2D.Data;
+using Multi2D.Extensions;
 using Multi2D.FSM;
 using UnityEngine;
 
@@ -30,7 +31,7 @@ namespace Multi2D.States
             this.model = model;
             this.config = config;
 
-            gravity = config.Gravity;
+            gravity = config.InitialJumpGravity;
             jumpVelocity = gravity * config.JumpTimeToApex;
         }
 
@@ -58,6 +59,9 @@ namespace Multi2D.States
             {
                 //TODO
             }
+
+            if (frameInput.Direction.HasHorizontalComponent() && velocity.x == 0)
+                velocity.x = frameInput.Direction.x * config.InAirHorizontalModifier;
 
             velocity.y -= gravity * deltaTime;
             model.SetVelocity(velocity);

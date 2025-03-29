@@ -1,8 +1,6 @@
 ﻿using Multi2D.Data;
 using Multi2D.Extensions;
 using Multi2D.FSM;
-using R3;
-using System;
 using UnityEngine;
 
 namespace Multi2D.States
@@ -16,8 +14,10 @@ namespace Multi2D.States
         private PlayerConfig config;
         private CollisionDetector collisionDetector;
         private readonly float gravity;
-        private readonly float coyotyTime;
-        private float coyotyTimeCounter = 0;
+        private readonly float coyoteTime;
+
+        private bool coyoteTimeAvailable = false;
+        private float fallPerformedTime;
 
         public PlayerFallState(
             IInputDataProvider inputDataProvider,
@@ -34,14 +34,15 @@ namespace Multi2D.States
             this.config = config;
             this.collisionDetector = collisionDetector;
 
-            gravity = config.Gravity * config.FallGravityModifier;
-            coyotyTime = config.CoyotyTime;
+            gravity = config.InitialJumpGravity * config.FallGravityModifier;
+            coyoteTime = config.CoyoteTime;
         }
 
         public override void Enter()
         {
-            if (model.State.CurrentValue == PlayerStateType.Run)
-                coyotyTimeCounter = 0f;
+            coyoteTimeAvailable = model.State.CurrentValue == PlayerStateType.Run;
+            if (coyoteTimeAvailable)
+                fallPerformedTime = Time.time;
 
             model.SetState(PlayerStateType.Fall);
             animationController.PlayFall();
@@ -51,33 +52,46 @@ namespace Multi2D.States
         {
             FrameInput frameInput = inputDataProvider.FrameInput;
 
-            if (collisionDetector.IsGrounded())
-            {
-                if(frameInput.Direction.HasHorizontalComponent())
-                    stateChangeRequester.RequestToChangeStateTo<PlayerMoveState>();
-                else
-                    stateChangeRequester.RequestToChangeStateTo<PlayerIdleState>();
+            if (TrySwitchState(frameInput))
                 return;
-            }
-
-            if (coyotyTimeCounter <= coyotyTime && frameInput.JumpPerformed)
-            {
-                stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();
-                return;
-            }
 
             Vector2 velocity = model.Velocity.CurrentValue;
             velocity.y -= gravity * deltaTime;
-            velocity.x += frameInput.Direction.x * config.InAirHorizontalModifier * deltaTime;
-            coyotyTimeCounter += deltaTime;
+            velocity.y = Mathf.Max(velocity.y, -config.MaxVerticalFallSpeed);
+
+            if(frameInput.Direction.HasHorizontalComponent() && Mathf.Sign(frameInput.Direction.x) != Mathf.Sign(velocity.x))
+                velocity.x = frameInput.Direction.x * config.InAirHorizontalModifier;
+
             model.SetVelocity(velocity);
         }
 
         public override void Exit(){}
 
-        public void Dispose()
+        private bool TrySwitchState(FrameInput frameInput)
         {
+            if (collisionDetector.IsGrounded())
+            {
+                if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer)
+                {
+                    stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();
+                    return true;
+                }
 
+                if (frameInput.Direction.HasHorizontalComponent())
+                    stateChangeRequester.RequestToChangeStateTo<PlayerMoveState>();
+                else
+                    stateChangeRequester.RequestToChangeStateTo<PlayerIdleState>();
+                return true;
+            }
+
+            if (coyoteTimeAvailable && frameInput.JumpPerformed && fallPerformedTime - frameInput.JumpPerformedTime <= coyoteTime)
+            {
+                coyoteTimeAvailable = false;
+                stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();
+                return true;
+            }
+
+            return false;
         }
     }
 }

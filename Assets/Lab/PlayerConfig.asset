@@ -12,24 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32d1037d40112c041964f8481a2f3da9, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
+  <AxisInputTreshold>k__BackingField: 0.3
   <Speed>k__BackingField: 10
   <ClimbingSpeed>k__BackingField: 8
-  <InAirHorizontalModifier>k__BackingField: 1
-  <CoyotyTime>k__BackingField: 0.25
-  <MaxVerticalFallSpeed>k__BackingField: 20
+  <InAirHorizontalModifier>k__BackingField: 5
+  <CoyoteTime>k__BackingField: 0.25
+  <MaxVerticalFallSpeed>k__BackingField: 25
+  <OnGroundGravity>k__BackingField: 1
   <JumpHeight>k__BackingField: 3
   <JumpTimeToApex>k__BackingField: 0.5
   <FallGravityModifier>k__BackingField: 2
+  <JumpBuffer>k__BackingField: 0.25
   <FireRateBPM>k__BackingField: 80
   <BulletSpeed>k__BackingField: 20
   <CollisionDetectionConfig>k__BackingField:
     <ForwardOverlapBoxSize>k__BackingField: {x: 0.05, y: 1.6}
-    <ForwardOverlapOffset>k__BackingField: {x: 0.55, y: 0, z: 0}
+    <ForwardOverlapOffset>k__BackingField: {x: 0.67, y: 1}
     <ForwardMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 64
-    <TopOverlapBoxSize>k__BackingField: {x: 0.6, y: 0.05}
-    <TopOverlapOffset>k__BackingField: {x: -0.53, y: 0, z: 0}
+    <TopOverlapBoxSize>k__BackingField: {x: 0.65, y: 0.05}
+    <TopOverlapOffset>k__BackingField: {x: 0.24, y: 1.8}
     topCollisionLayers:
     - DetectionMask: 2
       LayerMask:
@@ -39,17 +42,17 @@ MonoBehaviour:
       LayerMask:
         serializedVersion: 2
         m_Bits: 512
-    <BottomOverlapBoxSize>k__BackingField: {x: 1.06, y: 0.04}
-    <BottomOverlapOffset>k__BackingField: {x: -0.53, y: 0.01, z: 0}
+    <BottomOverlapBoxSize>k__BackingField: {x: 1.04, y: 0.04}
+    <BottomOverlapOffset>k__BackingField: {x: 0.09, y: 0.01}
     bottomCollisionLayers:
-    - DetectionMask: 1
-      LayerMask:
-        serializedVersion: 2
-        m_Bits: 64
     - DetectionMask: 32
       LayerMask:
         serializedVersion: 2
         m_Bits: 512
+    - DetectionMask: 1
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 64
     <OverlapMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 576

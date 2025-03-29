@@ -11,6 +11,7 @@ namespace Multi2D
         private Vector2 direction;
         private bool jumpPerformed;
         private bool attackPerformed;
+        private float jumpPerformedTime;
 
         public FrameInput FrameInput { get; private set; }
 
@@ -35,7 +36,10 @@ namespace Multi2D
                 Direction = direction,
                 JumpPerformed = jumpPerformed,
                 AttackPerformed = attackPerformed,
+                JumpPerformedTime = jumpPerformedTime,
             };
+
+            //Debug.Log($"Frame input {FrameInput}");
         }
 
         public void Enable() => input.Enable();
@@ -56,7 +60,12 @@ namespace Multi2D
         }
 
         private void OnMove(InputAction.CallbackContext ctx) => direction = ctx.ReadValue<Vector2>();
-        private void OnJump(InputAction.CallbackContext context) => jumpPerformed = context.performed;
+        private void OnJump(InputAction.CallbackContext context)
+        {
+            jumpPerformed = context.performed;
+            jumpPerformedTime = jumpPerformed ? Time.time : 0;
+        }
+
         private void OnAttack(InputAction.CallbackContext context) => attackPerformed = context.performed;
     }
 }

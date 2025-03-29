@@ -10,5 +10,6 @@ namespace Multi2D.Data
         ReadOnlyReactiveProperty<int> LookDirection { get; }
         ReadOnlyReactiveProperty<Vector2> Position { get; }
         ReadOnlyReactiveProperty<PlayerStateType> State { get; }
+        ReadOnlyReactiveProperty<bool> IsAttack { get; }
     }
 }

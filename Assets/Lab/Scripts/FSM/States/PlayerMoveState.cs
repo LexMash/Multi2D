@@ -48,7 +48,7 @@ namespace Multi2D.States
                 return;
             }
 
-            if (frameInput.JumpPerformed)
+            if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer) //TODO fix this magic number
             {
                 stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();
                 return;
@@ -66,6 +66,7 @@ namespace Multi2D.States
             }
 
             velocity.x = frameInput.Direction.x * config.Speed;
+            velocity.y = -config.OnGroundGravity;
             model.SetVelocity(velocity);
         }
 

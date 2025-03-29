@@ -20,17 +20,13 @@ namespace Multi2D.Assets.Lab.Scripts.PlayerComponents
         public void HandleCollisions()
         {
             if (!collisionDetector.CanMoveForward())
-            {
-                //frameVelocity.HorizontalSpeed = 0;
                 model.SetVelocity(new Vector2(0, model.Velocity.CurrentValue.y));
-            }
-                
+
             if (!collisionDetector.CanMoveUp())
                 model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Min(0f, model.Velocity.CurrentValue.y)));
 
-
-            if (collisionDetector.IsGrounded())
-                model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Max(0f, model.Velocity.CurrentValue.y)));
+            //if (collisionDetector.IsGrounded())
+            //    model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Max(0f, model.Velocity.CurrentValue.y)));
         }
     }
 }

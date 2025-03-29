@@ -1,5 +1,6 @@
 ﻿using Multi2D.Assets.Lab.Scripts.PlayerComponents;
 using Multi2D.Data;
+using Multi2D.Extensions;
 using Multi2D.FSM;
 using Multi2D.States;
 using UnityEngine;
@@ -15,8 +16,7 @@ namespace Multi2D
         [field: SerializeField] public FlipComponent FlipComponent { get; private set; }
         [field: SerializeField] public ObservableCollisionsDetector ObservableCollisionsDetector { get; private set; }
 
-        [SerializeField, Range(1,3)] private int steps = 2;
-        [SerializeField, Range(0.01f,1f)] private float acceleration = 1f;
+        [SerializeField, Range(1, 5)] private int steps = 2;
 
         public PlayerConfig PlayerConfig;
         private CollisionDetector collisionDetector;
@@ -29,15 +29,15 @@ namespace Multi2D
         private PlayerJumpState jumpState;
         private PlayerFallState fallState;
         private PlayerModel model;
-
-        private Rigidbody2D rigidbody2;
-        private Vector2 velocity = new Vector2();
+        private float dt;
 
         private void Start() //DELETE after tests
         {
+            VectorsExtensions.AxisInputTreshold = PlayerConfig.AxisInputTreshold;
+
             model = new(1, Vector2.zero, 1);
 
-            collisionDetector = new(ObservableCollisionsDetector, PlayerConfig.CollisionDetectionConfig, model);
+            collisionDetector = new(ObservableCollisionsDetector, PlayerConfig.CollisionDetectionConfig, model, GetComponent<Rigidbody2D>());
             collisionDetector.Initialize();
 
             inputReader = new LocalInputReader(new LocalMultiplayerInput());
@@ -46,7 +46,7 @@ namespace Multi2D
             stateChangeRequester = new();
             playerStateMachine = new(stateChangeRequester);
 
-            idleState = new PlayerIdleState(inputReader, stateChangeRequester, AnimationController, model);
+            idleState = new PlayerIdleState(inputReader, stateChangeRequester, AnimationController, model, PlayerConfig);
             moveState = new PlayerMoveState(inputReader, stateChangeRequester, AnimationController, model, PlayerConfig, collisionDetector);
             jumpState = new PlayerJumpState(inputReader, stateChangeRequester, AnimationController, model, PlayerConfig);
             fallState = new PlayerFallState(inputReader, stateChangeRequester, AnimationController, model, PlayerConfig, collisionDetector);
@@ -57,33 +57,26 @@ namespace Multi2D
                 .RegisterState(jumpState)
                 .RegisterState(fallState);
 
-            //collisionHandler = new(model, collisionDetector);
+            collisionHandler = new(model, collisionDetector);
             playerStateMachine.Initialize();
             FlipComponent.Initialize(model);
 
-            rigidbody2 = GetComponent<Rigidbody2D>();
+            dt = Time.fixedDeltaTime / steps;
         }
 
         private void FixedUpdate()
-        {
-            var dt = Time.fixedDeltaTime / steps;
-
+        {          
             for(int i = 0; i < steps; i++)
             {
                 inputReader.UpdateFrameInput();
                 FlipComponent.UpdateDirection(inputReader.FrameInput.Direction);
                 collisionDetector.UpdateCollisionData();           
                 playerStateMachine.Update(dt);
-                var velocity = model.Velocity.CurrentValue * dt;
-                print(velocity);             
+                collisionHandler.HandleCollisions();
+                var velocity = model.Velocity.CurrentValue * dt;       
                 MoveComponent.SetVelocity(velocity);
                 model.SetPosition(MoveComponent.CurrentPosition);
             }
-        }
-
-        private void Update()
-        {
-            
         }
     }
 }

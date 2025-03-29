@@ -14,10 +14,12 @@ namespace Multi2D
     {
         private readonly Dictionary<int, CollisionDetectionMask> topDetectionLayerMap = new();
         private readonly Dictionary<int, CollisionDetectionMask> bottomDetectionLayerMap = new();
+
         private readonly CompositeDisposable subscribtions = new CompositeDisposable();
         private readonly ObservableCollisionsDetector monoDetector;
         private readonly CollisionDetectionConfig config;
         private readonly PlayerModel model;
+        private readonly Rigidbody2D playerRb;
         private readonly Collider2D playerCollider;
         private readonly LayerMask overlapMask;
 
@@ -26,18 +28,24 @@ namespace Multi2D
 
         public event Action<Collision2D> OnBulletCollision = delegate { };
         public event Action<CoinView> OnCoinsCollision = delegate { };
+
         public CollisionDetectionMask DetectedMask => detectedMask;
 
         public CollisionDetector(
             ObservableCollisionsDetector monoDetector, 
             CollisionDetectionConfig config,
-            PlayerModel model)
+            PlayerModel model,
+            Rigidbody2D playerRb)
         {
             this.monoDetector = monoDetector;
             this.config = config;
             this.model = model;
+            this.playerRb = playerRb;
             playerCollider = monoDetector.Collider;
             overlapMask = config.OverlapMask;
+
+            Physics2D.queriesHitTriggers = false;
+            Physics2D.queriesStartInColliders = false;
         }
 
         public void Initialize()
@@ -56,26 +64,33 @@ namespace Multi2D
             subscribtions.Add(model.LookDirection.Subscribe((value) => directionMultiplier = value));
 
 #if UNITY_EDITOR
-            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetTopOverlapBoxOrigin(), config.TopOverlapBoxSize));
-            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetForwardOverlapBoxOrigin(), config.ForwardOverlapBoxSize));
-            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetBottomOverlapBoxOrigin(), config.BottomOverlapBoxSize));
+            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.TopOverlapOffset), config.TopOverlapBoxSize));
+            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.ForwardOverlapOffset), config.ForwardOverlapBoxSize));
+            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.BottomOverlapOffset), config.BottomOverlapBoxSize));
 #endif
         }       
 
         public void ExcludeLayers(LayerMask layerMask) => playerCollider.excludeLayers ^= layerMask;
-        public void IncludeLayers(LayerMask layerMask) => playerCollider.includeLayers |= layerMask;
+        public void ResetExcludeLayers() => playerCollider.excludeLayers = default;
 
         public void UpdateCollisionData()
         {
             ResetMask();
-            CheckCollisions(OverlapBoxAllAndReturnColliders(GetTopOverlapBoxOrigin, config.TopOverlapBoxSize), topDetectionLayerMap);
-            CheckForwardCollisions(OverlapBoxAllAndReturnColliders(GetForwardOverlapBoxOrigin, config.ForwardOverlapBoxSize));
-            CheckBottomCollisions(OverlapBoxAllAndReturnColliders(GetBottomOverlapBoxOrigin, config.BottomOverlapBoxSize), bottomDetectionLayerMap);
+            Vector2 origin = GetOverlapBoxOrigin(config.BottomOverlapOffset);
+            Collider2D[] colliders = OverlapBoxAllAndReturnColliders(origin, config.BottomOverlapBoxSize);
+            CheckBottomCollisions(colliders);
+
+            origin = GetOverlapBoxOrigin(config.TopOverlapOffset);
+            colliders = OverlapBoxAllAndReturnColliders(origin, config.TopOverlapBoxSize);
+            CheckTopCollisions(colliders);
+
+            origin = GetOverlapBoxOrigin(config.ForwardOverlapOffset);
+            colliders = OverlapBoxAllAndReturnColliders(origin, config.ForwardOverlapBoxSize);
+            CheckCollisions(colliders, config.ForwardMask, CollisionDetectionMask.Forward);
         }
 
         public void Dispose()
         {
-            bottomDetectionLayerMap.Clear();
             topDetectionLayerMap.Clear();
             subscribtions.Dispose();
         }
@@ -84,11 +99,11 @@ namespace Multi2D
         private void ResetMask() => detectedMask = CollisionDetectionMask.None;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Collider2D[] OverlapBoxAllAndReturnColliders(Func<Vector3> getOverlapBox, Vector2 overlapBoxSize) 
-            => Physics2D.OverlapBoxAll(getOverlapBox(), overlapBoxSize, 0f, overlapMask);
+        private Collider2D[] OverlapBoxAllAndReturnColliders(in Vector2 origin, Vector2 overlapBoxSize) 
+            => Physics2D.OverlapBoxAll(origin, overlapBoxSize, 0f, overlapMask);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void CheckCollisions(Collider2D[] colliders, Dictionary<int, CollisionDetectionMask> map)
+        private void CheckTopCollisions(Collider2D[] colliders)
         {
             var count = colliders.Length;
 
@@ -102,14 +117,13 @@ namespace Multi2D
                     Collider2D collider = colliders[i];
                     GameObject go = collider.gameObject;
                     int gameObjectLayer = go.ConvertGoLayerIndexToLayerMaskValue();
-                    CollisionDetectionMask detected = map[gameObjectLayer];
+                    CollisionDetectionMask detected = topDetectionLayerMap[gameObjectLayer];
                     detectedMask |= detected;
                 }
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void CheckBottomCollisions(Collider2D[] colliders, Dictionary<int, CollisionDetectionMask> map)
+        private void CheckBottomCollisions(Collider2D[] colliders)
         {
             var count = colliders.Length;
 
@@ -121,24 +135,43 @@ namespace Multi2D
                 for (int i = 0; i < count; i++)
                 {
                     Collider2D collider = colliders[i];
-                    GameObject go = colliders[i].gameObject;
+                    GameObject go = collider.gameObject;
                     int gameObjectLayer = go.ConvertGoLayerIndexToLayerMaskValue();
-                    CollisionDetectionMask detected = map[gameObjectLayer];
+                    CollisionDetectionMask detected = bottomDetectionLayerMap[gameObjectLayer];
+                    detectedMask |= detected;
 
                     if (detected == CollisionDetectionMask.Ground)
-                    {
-                        Transform playerTransform = playerCollider.transform.parent; //TODO REFACTOR this                       
-                        playerTransform.position = new Vector3(playerTransform.position.x, collider.bounds.max.y, playerTransform.position.z);
-                    }
-
-                    detectedMask |= detected;
+                        CorrectYPosition();
                 }
             }
         }
 
-        private void CheckForwardCollisions(Collider2D[] colliders)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CorrectYPosition()
+        {
+            RaycastHit2D hit = Physics2D.BoxCast(
+                GetOverlapBoxOrigin(config.BottomOverlapOffset) + Vector2.up * 0.3f, config.BottomOverlapBoxSize, 0f, Vector2.down, 0.5f, config.ForwardMask); //TODO refactor
+
+            if (hit)
+            {
+                var playerPosition = playerRb.position;
+                var point = hit.point;
+
+                if (hit.normal == Vector2.up)
+                {
+                    detectedMask |= CollisionDetectionMask.Ground;
+
+                    if(playerPosition.y < point.y)
+                        playerRb.position = new Vector3(playerRb.position.x, point.y);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void CheckCollisions(Collider2D[] colliders, LayerMask layerMask, CollisionDetectionMask detectionMask)
         {
             var count = colliders.Length;
+
             if (count > 0)
             {
                 if (detectedMask.HasFlag(CollisionDetectionMask.None))
@@ -147,35 +180,15 @@ namespace Multi2D
                 for (int i = 0; i < count; i++)
                 {
                     GameObject go = colliders[i].gameObject;
-                    if(go.IsSameLayer(config.ForwardMask))
-                        detectedMask |= CollisionDetectionMask.Forward;
+                    if (go.IsSameLayer(layerMask))
+                        detectedMask |= detectionMask;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Vector3 GetTopOverlapBoxOrigin()
-        {
-            var bounds = playerCollider.bounds.max;
-            bounds += config.TopOverlapOffset;
-            return bounds;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Vector3 GetBottomOverlapBoxOrigin()
-        {
-            var bounds = playerCollider.bounds.min;
-            bounds -= config.BottomOverlapOffset;
-            return bounds;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Vector3 GetForwardOverlapBoxOrigin()
-        {
-            var bounds = playerCollider.bounds.center;
-            bounds += config.ForwardOverlapOffset * directionMultiplier;
-            return bounds;
-        }
+        private Vector2 GetOverlapBoxOrigin(Vector2 offset) 
+            => playerRb.position + new Vector2(offset.x * directionMultiplier, offset.y);
 
         private void OnTriggerEnter(Collider2D other)
         {

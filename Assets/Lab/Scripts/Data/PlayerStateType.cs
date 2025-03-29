@@ -5,8 +5,6 @@
         None,
         Idle,
         Run,
-        Fire,
-        RunFire,
         Jump,
         Fall,
         Climb,
