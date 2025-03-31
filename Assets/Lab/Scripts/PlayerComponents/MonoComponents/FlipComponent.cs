@@ -1,4 +1,5 @@
 ﻿using Multi2D.Data;
+using Multi2D.Extensions;
 using UnityEngine;
 
 namespace Multi2D
@@ -24,7 +25,7 @@ namespace Multi2D
             if (x == 0)
                 return;
 
-            if (Mathf.Abs(x) <= 0.3f) //TODO get it into config treshold
+            if (Mathf.Abs(x) <= VectorsExtensions.AxisInputTreshold) //TODO get it into config treshold
                 return;
 
             int newLookDirection = (int)Mathf.Sign(x);

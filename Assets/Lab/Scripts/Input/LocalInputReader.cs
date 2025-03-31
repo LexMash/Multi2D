@@ -38,12 +38,17 @@ namespace Multi2D
                 AttackPerformed = attackPerformed,
                 JumpPerformedTime = jumpPerformedTime,
             };
-
-            //Debug.Log($"Frame input {FrameInput}");
         }
 
         public void Enable() => input.Enable();
-        public void Disable() => input.Disable();
+        public void Disable()
+        {
+            input.Disable();
+
+            ResetJumpInput();
+            direction = Vector2.zero;
+            attackPerformed = false;
+        }
 
         public void Dispose()
         {
@@ -57,6 +62,12 @@ namespace Multi2D
 
             input.PlayerControll.Attack.performed -= OnAttack;
             input.PlayerControll.Attack.canceled -= OnAttack;
+        }
+
+        public void ResetJumpInput()
+        {
+            jumpPerformed = false;
+            jumpPerformedTime = 0;
         }
 
         private void OnMove(InputAction.CallbackContext ctx) => direction = ctx.ReadValue<Vector2>();

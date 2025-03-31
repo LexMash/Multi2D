@@ -48,7 +48,7 @@ namespace Multi2D.States
                 return;
             }
 
-            if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer) //TODO fix this magic number
+            if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer)
             {
                 stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();
                 return;

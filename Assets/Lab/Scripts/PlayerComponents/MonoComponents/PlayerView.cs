@@ -57,7 +57,7 @@ namespace Multi2D
                 .RegisterState(jumpState)
                 .RegisterState(fallState);
 
-            collisionHandler = new(model, collisionDetector);
+            collisionHandler = new(model, collisionDetector, inputReader);
             playerStateMachine.Initialize();
             FlipComponent.Initialize(model);
 
@@ -73,7 +73,7 @@ namespace Multi2D
                 collisionDetector.UpdateCollisionData();           
                 playerStateMachine.Update(dt);
                 collisionHandler.HandleCollisions();
-                var velocity = model.Velocity.CurrentValue * dt;       
+                Vector2 velocity = model.Velocity.CurrentValue * dt;
                 MoveComponent.SetVelocity(velocity);
                 model.SetPosition(MoveComponent.CurrentPosition);
             }

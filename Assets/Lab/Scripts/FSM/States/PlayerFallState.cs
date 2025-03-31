@@ -84,7 +84,7 @@ namespace Multi2D.States
                 return true;
             }
 
-            if (coyoteTimeAvailable && frameInput.JumpPerformed && fallPerformedTime - frameInput.JumpPerformedTime <= coyoteTime)
+            if (coyoteTimeAvailable && frameInput.JumpPerformed && frameInput.JumpPerformedTime - fallPerformedTime <= coyoteTime)
             {
                 coyoteTimeAvailable = false;
                 stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();

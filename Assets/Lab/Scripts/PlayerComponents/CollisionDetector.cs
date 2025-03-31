@@ -67,6 +67,7 @@ namespace Multi2D
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.TopOverlapOffset), config.TopOverlapBoxSize));
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.ForwardOverlapOffset), config.ForwardOverlapBoxSize));
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.BottomOverlapOffset), config.BottomOverlapBoxSize));
+            monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.BottomOverlapOffset) + Vector2.up * 0.15f, config.BottomOverlapBoxSize));
 #endif
         }       
 
@@ -150,7 +151,7 @@ namespace Multi2D
         public void CorrectYPosition()
         {
             RaycastHit2D hit = Physics2D.BoxCast(
-                GetOverlapBoxOrigin(config.BottomOverlapOffset) + Vector2.up * 0.3f, config.BottomOverlapBoxSize, 0f, Vector2.down, 0.5f, config.ForwardMask); //TODO refactor
+                GetOverlapBoxOrigin(config.BottomOverlapOffset) + Vector2.up * 0.15f, config.BottomOverlapBoxSize, 0f, Vector2.down, 0.25f, config.ForwardMask); //TODO refactor
 
             if (hit)
             {
@@ -159,10 +160,10 @@ namespace Multi2D
 
                 if (hit.normal == Vector2.up)
                 {
-                    detectedMask |= CollisionDetectionMask.Ground;
-
                     if(playerPosition.y < point.y)
-                        playerRb.position = new Vector3(playerRb.position.x, point.y);
+                        playerRb.position = new Vector2(playerRb.position.x, point.y);
+                    else
+                        detectedMask ^= CollisionDetectionMask.Ground;
                 }
             }
         }

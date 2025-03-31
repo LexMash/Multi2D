@@ -5,5 +5,6 @@
         void UpdateFrameInput();
         void Disable();
         void Enable();
+        void ResetJumpInput();
     }
 }
