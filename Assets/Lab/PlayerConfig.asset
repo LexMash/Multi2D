@@ -16,7 +16,7 @@ MonoBehaviour:
   <Speed>k__BackingField: 10
   <ClimbingSpeed>k__BackingField: 8
   <InAirHorizontalModifier>k__BackingField: 5
-  <CoyoteTime>k__BackingField: 0.25
+  <CoyoteTime>k__BackingField: 0.1
   <MaxVerticalFallSpeed>k__BackingField: 25
   <OnGroundGravity>k__BackingField: 1
   <JumpHeight>k__BackingField: 3
@@ -27,12 +27,12 @@ MonoBehaviour:
   <BulletSpeed>k__BackingField: 20
   <CollisionDetectionConfig>k__BackingField:
     <ForwardOverlapBoxSize>k__BackingField: {x: 0.05, y: 1.6}
-    <ForwardOverlapOffset>k__BackingField: {x: 0.67, y: 1}
+    <ForwardOverlapOffset>k__BackingField: {x: 0.65, y: 1}
     <ForwardMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 64
-    <TopOverlapBoxSize>k__BackingField: {x: 0.65, y: 0.05}
-    <TopOverlapOffset>k__BackingField: {x: 0.24, y: 1.8}
+    <TopOverlapBoxSize>k__BackingField: {x: 0.77, y: 0.05}
+    <TopOverlapOffset>k__BackingField: {x: 0.06, y: 1.8}
     topCollisionLayers:
     - DetectionMask: 2
       LayerMask:
