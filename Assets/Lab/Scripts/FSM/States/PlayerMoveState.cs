@@ -13,6 +13,7 @@ namespace Multi2D.States
         private readonly PlayerModel model;
         private readonly PlayerConfig config;
         private readonly CollisionDetector collisionDetector;
+        private readonly AttackController attackController;
         private Vector2 velocity;
 
         public PlayerMoveState(
@@ -21,7 +22,8 @@ namespace Multi2D.States
             PlayerAnimationController animationController, 
             PlayerModel model, 
             PlayerConfig config, 
-            CollisionDetector collisionDetector)
+            CollisionDetector collisionDetector,
+            AttackController attackController)
         {
             this.inputDataProvider = inputDataProvider;
             this.stateChangeRequester = stateChangeRequester;
@@ -29,6 +31,7 @@ namespace Multi2D.States
             this.model = model;
             this.config = config;
             this.collisionDetector = collisionDetector;
+            this.attackController = attackController;
         }
 
         public override void Enter()
@@ -41,6 +44,9 @@ namespace Multi2D.States
         {
             velocity = model.Velocity.CurrentValue;
             FrameInput frameInput = inputDataProvider.FrameInput;
+
+            if (frameInput.AttackPerformed)
+                attackController.FireOnMove();
 
             if (!collisionDetector.IsGrounded())
             {
@@ -59,11 +65,13 @@ namespace Multi2D.States
                 stateChangeRequester.RequestToChangeStateTo<PlayerIdleState>();
                 return;
             }
-                
-            if (frameInput.AttackPerformed)
-            {
-                //model.SetState(PlayerStateType.RunFire);
-            }
+
+            //if (collisionDetector.CanClimbUp() &&
+            //    frameInput.Direction.HasVerticalComponent())
+            //{
+            //    stateChangeRequester.RequestToChangeStateTo<PlayerClimbState>();
+            //    return;
+            //}
 
             velocity.x = frameInput.Direction.x * config.Speed;
             velocity.y = -config.OnGroundGravity;

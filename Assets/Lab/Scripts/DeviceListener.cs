@@ -35,6 +35,8 @@ namespace Multi2D
                     Debug.Log($"{user.id} has paired device - {inputDevice.name}");
                 }
             }
+
+            
         }
 
         private void OnDeviceChanged(InputDevice device, InputDeviceChange change)

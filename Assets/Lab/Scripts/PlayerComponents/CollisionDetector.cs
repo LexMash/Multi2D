@@ -59,9 +59,9 @@ namespace Multi2D
             playerCollider.contactCaptureLayers = config.ColliderContactCaptureLayers;
             playerCollider.callbackLayers = config.ColliderContactCaptureLayers;
 
-            subscribtions.Add(monoDetector.OnTriggerEnter2DAsObservable().Subscribe(OnTriggerEnter));
-            subscribtions.Add(monoDetector.OnCollisionEnter2DAsObservable().Subscribe(OnCollisionEnter));
-            subscribtions.Add(model.LookDirection.Subscribe((value) => directionMultiplier = value));
+            monoDetector.OnTriggerEnter2DAsObservable().Subscribe(OnTriggerEnter).AddTo(subscribtions);
+            monoDetector.OnCollisionEnter2DAsObservable().Subscribe(OnCollisionEnter).AddTo(subscribtions);
+            model.LookDirection.Subscribe((value) => directionMultiplier = value).AddTo(subscribtions);
 
 #if UNITY_EDITOR
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.TopOverlapOffset), config.TopOverlapBoxSize));
@@ -124,6 +124,7 @@ namespace Multi2D
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckBottomCollisions(Collider2D[] colliders)
         {
             var count = colliders.Length;

@@ -8,6 +8,6 @@
         Jump,
         Fall,
         Climb,
-        TakeDamage
+        TakeDamage,
     }
 }

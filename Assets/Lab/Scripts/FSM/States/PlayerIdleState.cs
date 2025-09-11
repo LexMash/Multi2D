@@ -12,6 +12,7 @@ namespace Multi2D.States
         private readonly PlayerAnimationController animationController;
         private readonly PlayerModel model;
         private readonly PlayerConfig config;
+        private readonly CollisionDetector collisionDetector;
         private bool doesAttackAnimationPlay = false;
         private bool isBackInMainState = true;
 
@@ -20,13 +21,15 @@ namespace Multi2D.States
             PlayerFsmStateChangeRequester stateChangeRequester, 
             PlayerAnimationController animationController,
             PlayerModel model,
-            PlayerConfig config)
+            PlayerConfig config,
+            CollisionDetector collisionDetector)
         {
             this.inputProvider = inputProvider;
             this.stateChangeRequester = stateChangeRequester;
             this.animationController = animationController;
             this.model = model;
             this.config = config;
+            this.collisionDetector = collisionDetector;
         }
 
         public override void Enter()
@@ -41,7 +44,7 @@ namespace Multi2D.States
             FrameInput frameInput = inputProvider.FrameInput;
             var velocity = model.Velocity.CurrentValue;
 
-            if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer) //TODO fix this magic number
+            if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer)
             {
                 stateChangeRequester.RequestToChangeStateTo<PlayerJumpState>();
                 return;
@@ -53,13 +56,11 @@ namespace Multi2D.States
                 return;
             }
 
-            if (frameInput.AttackPerformed && CanStartAttackAnimation())
+            if (collisionDetector.CanClimbUp() &&
+                frameInput.Direction.HasVerticalComponent())
             {
-                //TODO
-            }
-            else if (!isBackInMainState)
-            {
-                //TODO
+                stateChangeRequester.RequestToChangeStateTo<PlayerClimbState>();
+                return;
             }
 
             velocity.y = -config.OnGroundGravity;

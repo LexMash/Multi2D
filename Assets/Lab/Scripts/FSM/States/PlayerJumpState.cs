@@ -12,6 +12,7 @@ namespace Multi2D.States
         private readonly PlayerAnimationController animationController;
         private readonly PlayerModel model;
         private readonly PlayerConfig config;
+        private readonly CollisionDetector collisionDetector;
         private readonly float gravity;
         private readonly float jumpVelocity;
 
@@ -23,14 +24,15 @@ namespace Multi2D.States
             PlayerFsmStateChangeRequester stateChangeRequester,
             PlayerAnimationController animationController,
             PlayerModel model,
-            PlayerConfig config)
+            PlayerConfig config,
+            CollisionDetector collisionDetector)
         {
             this.inputDataProvider = inputDataProvider;
             this.stateChangeRequester = stateChangeRequester;
             this.animationController = animationController;
             this.model = model;
             this.config = config;
-
+            this.collisionDetector = collisionDetector;
             gravity = config.InitialJumpGravity;
             jumpVelocity = gravity * config.JumpTimeToApex;
         }
@@ -55,10 +57,13 @@ namespace Multi2D.States
                 return;
             }
 
-            if (frameInput.AttackPerformed)
-            {
-                //TODO
-            }
+            //if (collisionDetector.CanClimbDown() ||
+            //    collisionDetector.CanClimbUp() &&
+            //    frameInput.Direction.HasVerticalComponent())
+            //{
+            //    stateChangeRequester.RequestToChangeStateTo<PlayerClimbState>();
+            //    return;
+            //}
 
             if (frameInput.Direction.HasHorizontalComponent() && velocity.x == 0)
                 velocity.x = frameInput.Direction.x * config.InAirHorizontalModifier;

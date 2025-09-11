@@ -91,6 +91,14 @@ namespace Multi2D.States
                 return true;
             }
 
+            //if(collisionDetector.CanClimbDown() || 
+            //    collisionDetector.CanClimbUp() &&
+            //    frameInput.Direction.HasVerticalComponent())
+            //{
+            //    stateChangeRequester.RequestToChangeStateTo<PlayerClimbState>();
+            //    return true;
+            //}
+
             return false;
         }
     }

@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: 8998428994238577344}
   - component: {fileID: 2950064746951809057}
   - component: {fileID: 4211052687925866337}
+  - component: {fileID: 6893440848383521972}
   m_Layer: 7
   m_Name: PlayerView
   m_TagString: Untagged
@@ -247,7 +248,8 @@ MonoBehaviour:
   <MoveComponent>k__BackingField: {fileID: 8998428994238577344}
   <FlipComponent>k__BackingField: {fileID: 4211052687925866337}
   <ObservableCollisionsDetector>k__BackingField: {fileID: 8512023332642567976}
-  dtStep: 0.5
+  AttackController: {fileID: 6893440848383521972}
+  steps: 5
   PlayerConfig: {fileID: 11400000, guid: 6a6d81f14b3105048a78e3d129166ccb, type: 2}
 --- !u!114 &8998428994238577344
 MonoBehaviour:
@@ -261,7 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d5df963f851be4aa62658d7ea2a121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetTransform: {fileID: 2577519108926598828}
+  target: {fileID: 2950064746951809057}
 --- !u!50 &2950064746951809057
 Rigidbody2D:
   serializedVersion: 5
@@ -302,6 +304,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2577519108926598828}
+--- !u!114 &6893440848383521972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5384427715326554179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc8226d7c669374f91466a32a8adebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Multi2D.AttackController
+  attacker: {fileID: 2577519108926598828}
+  bulletPrefab: {fileID: 5583154625042524890, guid: 85389e059ec831c4fad6fbf9162962cd, type: 3}
+  bulletOrigin: {fileID: 5828505170323827279}
+  BulletSpeed: 15
+  firePause: 0.5
 --- !u!1 &8142688605801740243
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,6 +373,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -375,6 +396,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 994033097
   m_SortingLayer: 3
   m_SortingOrder: 0
