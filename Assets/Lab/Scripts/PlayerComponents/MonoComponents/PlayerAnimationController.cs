@@ -7,23 +7,25 @@ namespace Multi2D
     {
         private const int CURRENT_LAYER_INDEX = 0;
 
-        private readonly int isMovingHash = Animator.StringToHash("isMoving");
-        private readonly int isInAirHash = Animator.StringToHash("isInAir");
-        private readonly int isClimbingHash = Animator.StringToHash("isClimbing");
-        private readonly int idleHash = Animator.StringToHash("Idle");
-        private readonly int runHash = Animator.StringToHash("Run");
-        private readonly int fireHash = Animator.StringToHash("Fire");
-        private readonly int jumpHash = Animator.StringToHash("Jump");
-        private readonly int fallHash = Animator.StringToHash("Fall");
-        private readonly int climbHash = Animator.StringToHash("Climb");
-        private readonly int hurtHash = Animator.StringToHash("Hurt");
-        private readonly int verticalSpeedParamHash = Animator.StringToHash("verticalSpeed");
-        private readonly int horizontalSpeedParamHash = Animator.StringToHash("horizontalSpeed");
+        private static readonly int isMovingHash = Animator.StringToHash("isMoving");
+        private static readonly int isInAirHash = Animator.StringToHash("isInAir");
+        private static readonly int isClimbingHash = Animator.StringToHash("isClimbing");
+        private static readonly int idleHash = Animator.StringToHash("Idle");
+        private static readonly int runHash = Animator.StringToHash("Run");
+        private static readonly int fireHash = Animator.StringToHash("Fire");
+        private static readonly int jumpHash = Animator.StringToHash("Jump");
+        private static readonly int fallHash = Animator.StringToHash("Fall");
+        private static readonly int climbHash = Animator.StringToHash("Climb");
+        private static readonly int hurtHash = Animator.StringToHash("Hurt");
+        private static readonly int verticalSpeedParamHash = Animator.StringToHash("verticalSpeed");
+        private static readonly int horizontalSpeedParamHash = Animator.StringToHash("horizontalSpeed");
 
         [SerializeField] private Animator animator;
 
         public event Action<AnimationEventType> EventTriggered = delegate { };
+
         public float CurrentAnimationProgress => animator.GetCurrentAnimatorStateInfo(CURRENT_LAYER_INDEX).normalizedTime;
+
         public void PlayRun()
         {
             animator.SetBool(isMovingHash, true);
@@ -70,9 +72,6 @@ namespace Multi2D
         public void SetVerticalSpeed(float speed) => animator.SetFloat(verticalSpeedParamHash, speed);
         void IAnimationEventReceiver.Receive(AnimationEventType eventType) => EventTriggered.Invoke(eventType);
 
-        private void Reset()
-        {
-            animator = GetComponent<Animator>();
-        }
+        private void Reset() => animator = GetComponent<Animator>();
     }
 }

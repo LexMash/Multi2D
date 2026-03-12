@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Multi2D
 {
     [SelectionBase]
-    public class PlayerView : MonoBehaviour
+    public class PlayerView : MonoBehaviour, IAttacker
     {
         [field: SerializeField] public Transform BulletSpawnRoot { get; private set; }
         [field: SerializeField] public PlayerAnimationController AnimationController { get; private set; }
@@ -16,7 +16,9 @@ namespace Multi2D
         [field: SerializeField] public FlipComponent FlipComponent { get; private set; }
         [field: SerializeField] public ObservableCollisionsDetector ObservableCollisionsDetector { get; private set; }
 
-        public AttackController AttackController;
+        [SerializeField] private Rigidbody2D rb;
+
+        public AttackController AttackController; //TODO serializefield
 
         [SerializeField, Range(1, 5)] private int steps = 2;
 
@@ -30,19 +32,27 @@ namespace Multi2D
         private PlayerMoveState moveState;
         private PlayerJumpState jumpState;
         private PlayerFallState fallState;
-        private PlayerClimbState climbState;
+        //private PlayerClimbState climbState;
         private PlayerModel model;
         private float dt;
 
         public CollisionDetectionMask detectedMask;
 
+        public int ID { get; private set; }
+
         private void Start() //DELETE after tests
         {
+            ID = 0; //TODO remove
+
+            rb = GetComponent<Rigidbody2D>(); //TODO remove GetComp
+
             VectorsExtensions.AxisInputTreshold = PlayerConfig.AxisInputTreshold;
+
+            //if owner
 
             model = new(1, Vector2.zero, 1);
 
-            collisionDetector = new(ObservableCollisionsDetector, PlayerConfig.CollisionDetectionConfig, model, GetComponent<Rigidbody2D>());
+            collisionDetector = new(ObservableCollisionsDetector, PlayerConfig.CollisionDetectionConfig, model, rb);
             collisionDetector.Initialize();
 
             inputReader = new LocalInputReader(new LocalMultiplayerInput());
@@ -71,11 +81,15 @@ namespace Multi2D
             dt = Time.fixedDeltaTime / steps;
 
             AttackController.Init(AnimationController);
+
+            //if owner
         }
 
         private void FixedUpdate()
-        {          
-            for(int i = 0; i < steps; i++)
+        {
+            //if owner
+
+            for (int i = 0; i < steps; i++)
             {
                 inputReader.UpdateFrameInput();
                 FlipComponent.UpdateDirection(inputReader.FrameInput.Direction);
@@ -87,11 +101,19 @@ namespace Multi2D
                 Vector2 velocity = currentVelocity * dt;
                 MoveComponent.SetVelocity(velocity);
                 AnimationController.SetVerticalSpeed(currentVelocity.y);
+
                 if (inputReader.FrameInput.AttackPerformed) //TODO 
                     AttackController.Attack();
 
                 model.SetPosition(MoveComponent.CurrentPosition);
             }
+
+            //if owner
         }
+    }
+
+    public interface IAttacker //TODO remove
+    {
+        int ID { get; }
     }
 }

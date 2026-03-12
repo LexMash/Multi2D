@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Multi2D
 {
-    public partial class LocalInputReader : IInputReader, IDisposable
+    public class LocalInputReader : IInputReader, IDisposable
     {
         private readonly LocalMultiplayerInput input;
 

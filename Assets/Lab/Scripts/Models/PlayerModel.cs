@@ -36,15 +36,21 @@ namespace Multi2D.Data
 
         public bool TryRemoveCoins(int amount, out int removed)
         {
-            removed = 0;
-            var currentValue = coins.CurrentValue;
+            removed = amount;
+            int currentValue = coins.CurrentValue;
 
             if (currentValue == 0) 
                 return false;
 
-            removed = currentValue - amount;
-            removed = removed < 0 ? 0 : removed;
-            coins.Value = removed;
+            if (currentValue < amount)
+            {
+                removed = currentValue;
+                coins.Value = 0;
+            }
+            else
+            {
+                coins.Value = currentValue - amount;
+            }
 
             return true;
         }

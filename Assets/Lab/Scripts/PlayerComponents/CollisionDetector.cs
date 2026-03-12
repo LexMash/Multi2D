@@ -15,7 +15,7 @@ namespace Multi2D
         private readonly Dictionary<int, CollisionDetectionMask> topDetectionLayerMap = new();
         private readonly Dictionary<int, CollisionDetectionMask> bottomDetectionLayerMap = new();
 
-        private readonly CompositeDisposable subscribtions = new CompositeDisposable();
+        private readonly CompositeDisposable subscriptions = new();
         private readonly ObservableCollisionsDetector monoDetector;
         private readonly CollisionDetectionConfig config;
         private readonly PlayerModel model;
@@ -59,9 +59,9 @@ namespace Multi2D
             playerCollider.contactCaptureLayers = config.ColliderContactCaptureLayers;
             playerCollider.callbackLayers = config.ColliderContactCaptureLayers;
 
-            monoDetector.OnTriggerEnter2DAsObservable().Subscribe(OnTriggerEnter).AddTo(subscribtions);
-            monoDetector.OnCollisionEnter2DAsObservable().Subscribe(OnCollisionEnter).AddTo(subscribtions);
-            model.LookDirection.Subscribe((value) => directionMultiplier = value).AddTo(subscribtions);
+            monoDetector.OnTriggerEnter2DAsObservable().Subscribe(OnTriggerEnter).AddTo(subscriptions);
+            monoDetector.OnCollisionEnter2DAsObservable().Subscribe(OnCollisionEnter).AddTo(subscriptions);
+            model.LookDirection.DistinctUntilChanged().Subscribe(SetDirectionMultiplier).AddTo(subscriptions);
 
 #if UNITY_EDITOR
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.TopOverlapOffset), config.TopOverlapBoxSize));
@@ -69,7 +69,7 @@ namespace Multi2D
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.BottomOverlapOffset), config.BottomOverlapBoxSize));
             monoDetector.AddGizmoFunction(() => Gizmos.DrawWireCube(GetOverlapBoxOrigin(config.BottomOverlapOffset) + Vector2.up * 0.15f, config.BottomOverlapBoxSize));
 #endif
-        }       
+        }
 
         public void ExcludeLayers(LayerMask layerMask) => playerCollider.excludeLayers ^= layerMask;
         public void ResetExcludeLayers() => playerCollider.excludeLayers = default;
@@ -93,7 +93,7 @@ namespace Multi2D
         public void Dispose()
         {
             topDetectionLayerMap.Clear();
-            subscribtions.Dispose();
+            subscriptions.Dispose();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -103,7 +103,6 @@ namespace Multi2D
         private Collider2D[] OverlapBoxAllAndReturnColliders(in Vector2 origin, Vector2 overlapBoxSize) 
             => Physics2D.OverlapBoxAll(origin, overlapBoxSize, 0f, overlapMask);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckTopCollisions(Collider2D[] colliders)
         {
             var count = colliders.Length;
@@ -124,7 +123,8 @@ namespace Multi2D
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetDirectionMultiplier(int value) => directionMultiplier = value;
+
         private void CheckBottomCollisions(Collider2D[] colliders)
         {
             var count = colliders.Length;
@@ -148,7 +148,6 @@ namespace Multi2D
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CorrectYPosition()
         {
             RaycastHit2D hit = Physics2D.BoxCast(
@@ -169,7 +168,6 @@ namespace Multi2D
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckCollisions(Collider2D[] colliders, LayerMask layerMask, CollisionDetectionMask detectionMask)
         {
             var count = colliders.Length;

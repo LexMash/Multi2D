@@ -8,8 +8,8 @@ namespace Multi2D
         [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private Transform bulletOrigin;
 
-        public float BulletSpeed = 5;
-        public float firePause = 0.3f;
+        public float BulletSpeed = 5; //TODO MOVE TO CONFIG
+        public float firePause = 0.2f;
 
         private float counter = 0;
         private PlayerAnimationController animController;
@@ -26,7 +26,7 @@ namespace Multi2D
                 animController.PlayAttack();
         }
 
-        public void FireOnMove()
+        public void FireOnMove() //MOVE HIGHER
         {
             Fire();
         }
@@ -36,8 +36,8 @@ namespace Multi2D
             if (counter <= 0)
             {
                 var bullet = Instantiate(bulletPrefab, bulletOrigin.position, Quaternion.identity);
-                bullet.transform.localScale = attacker.localScale;
-                bullet.Init(attacker.localScale.x * Vector2.right * BulletSpeed);
+                bullet.transform.localScale = attacker.localScale; //remove add flip info
+                bullet.Setup(attacker.localScale.x * BulletSpeed * Vector2.right, 0); //TODO remove zero ID
                 counter = firePause;
             }           
         }

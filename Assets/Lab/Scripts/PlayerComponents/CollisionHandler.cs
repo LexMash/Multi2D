@@ -30,7 +30,6 @@ namespace Multi2D.Assets.Lab.Scripts.PlayerComponents
                 inputReader.ResetJumpInput();
                 model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Min(0f, model.Velocity.CurrentValue.y)));
             }
-                
 
             //if (collisionDetector.IsGrounded())
             //    model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Max(0f, model.Velocity.CurrentValue.y)));
