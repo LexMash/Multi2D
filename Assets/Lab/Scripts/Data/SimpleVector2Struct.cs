@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
 
 namespace Multi2D
 {
-    [SerializeField]
+    [Serializable]
     public struct SimpleVector2Struct
     {
         public float X;

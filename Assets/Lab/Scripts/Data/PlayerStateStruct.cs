@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Multi2D
 {
-    [SerializeField]
+    [Serializable]
     public struct PlayerStateStruct
     {
         public int Coins;
