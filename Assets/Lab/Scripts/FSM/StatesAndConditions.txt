@@ -1,0 +1,25 @@
+﻿Grounded + noDirectionInput => Idle
+Grounded + horizontalInput => Move
+Grounded + jumpInput => Jump
+
+inAir + AdditionalJumps > 0 => Jump
+inAir + verticalVelocity <= 0 => Fall
+Fall + GroundDetected => Grounded
+
+topDetecterOnLadder + verticalInput+ => Climb
+bottomDetecterOnLadder + verticalInput- => Climb
+Climb + topDetecterNotLadder + bottomDetecterOnLadder + yPlayerPos >= HighestYLadder => Grounded
+
+onLadder + directionalInput => Climb
+onLadder + Grounded + noDirectionalInput => Idle
+
+AnyState + fireInput => Attack + AnyState
+
+Grounded - Move - Idle - (Dash) - Attack
+InAir - Jump - Fall - (Dash) - Attack
+Climb - Move - Attack
+
+MainFSM
+GroundFSM
+InAirFSM
+ClimbFSM
