@@ -69,6 +69,12 @@ namespace Multi2D.States
 
         private bool TrySwitchState(FrameInput frameInput)
         {
+            if (model.State.CurrentValue == PlayerStateType.TakeHit)
+            {
+                stateChangeRequester.RequestToChangeStateTo<PlayerHurtState>();
+                return true;
+            }
+
             if (collisionDetector.IsGrounded())
             {
                 if (frameInput.JumpPerformed && Time.time - frameInput.JumpPerformedTime <= config.JumpBuffer)

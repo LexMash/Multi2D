@@ -41,6 +41,12 @@ namespace Multi2D.States
 
         public override void Update(float deltaTime)
         {
+            if (model.State.CurrentValue == PlayerStateType.TakeHit)
+            {
+                stateChangeRequester.RequestToChangeStateTo<PlayerHurtState>();
+                return;
+            }
+
             FrameInput frameInput = inputProvider.FrameInput;
             var velocity = model.Velocity.CurrentValue;
 

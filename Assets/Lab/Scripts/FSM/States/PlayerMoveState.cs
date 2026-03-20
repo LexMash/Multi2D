@@ -45,6 +45,12 @@ namespace Multi2D.States
             velocity = model.Velocity.CurrentValue;
             FrameInput frameInput = inputDataProvider.FrameInput;
 
+            if (model.State.CurrentValue == PlayerStateType.TakeHit)
+            {
+                stateChangeRequester.RequestToChangeStateTo<PlayerHurtState>();
+                return;
+            }
+
             if (frameInput.AttackPerformed)
                 attackController.FireOnMove();
 

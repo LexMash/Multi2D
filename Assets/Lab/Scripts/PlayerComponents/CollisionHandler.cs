@@ -22,17 +22,21 @@ namespace Multi2D.Assets.Lab.Scripts.PlayerComponents
 
         public void HandleCollisions()
         {
-            if (!collisionDetector.CanMoveForward())
-                model.SetVelocity(new Vector2(0, model.Velocity.CurrentValue.y));
+            var currentVelocity = model.Velocity.CurrentValue;
 
+            if (!collisionDetector.CanMoveForward())
+                currentVelocity.x = 0;
+                
             if (!collisionDetector.CanMoveUp())
             {
                 inputReader.ResetJumpInput();
-                model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Min(0f, model.Velocity.CurrentValue.y)));
+                currentVelocity.y = Mathf.Min(0f, currentVelocity.y);
             }
 
-            //if (collisionDetector.IsGrounded())
-            //    model.SetVelocity(new Vector2(model.Velocity.CurrentValue.x, Mathf.Max(0f, model.Velocity.CurrentValue.y)));
+            //if (collisionDetector.IsGrounded() && currentVelocity.y < 0)
+            //    currentVelocity.y = 0;
+
+            model.SetVelocity(currentVelocity);
         }
     }
 }

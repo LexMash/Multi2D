@@ -9,5 +9,10 @@ namespace Multi2D.Extensions
 
         public static int ConvertGoLayerIndexToLayerMaskValue(this GameObject gameObject) 
             => 1 << gameObject.layer;
+
+        public static bool Contains(this LayerMask layerMask, int layer)
+        {
+            return (layerMask.value & (1 << layer)) != 0;
+        }
     }
 }

@@ -10,9 +10,9 @@ namespace Multi2D
     {
         [field: SerializeField] public Collider2D Collider { get; private set; }
 
-        private readonly Subject<Collider2D> onTriggerEnter2D = new Subject<Collider2D>();
-        private readonly Subject<Collision2D> onCollisionEnter2D = new Subject<Collision2D>();
-        private readonly Subject<Collision2D> onCollisionExit2D = new Subject<Collision2D>();
+        private readonly Subject<Collider2D> onTriggerEnter2D = new();
+        private readonly Subject<Collision2D> onCollisionEnter2D = new();
+        private readonly Subject<Collision2D> onCollisionExit2D = new();
      
         public Observable<Collider2D> OnTriggerEnter2DAsObservable() => onTriggerEnter2D;
         public Observable<Collision2D> OnCollisionEnter2DAsObservable() => onCollisionEnter2D;

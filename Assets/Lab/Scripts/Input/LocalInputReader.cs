@@ -13,7 +13,9 @@ namespace Multi2D
         private bool attackPerformed;
         private float jumpPerformedTime;
 
-        public FrameInput FrameInput { get; private set; }
+        private FrameInput frameInput;
+
+        public FrameInput FrameInput => frameInput;
 
         public LocalInputReader(LocalMultiplayerInput input)
         {
@@ -31,7 +33,7 @@ namespace Multi2D
 
         public void UpdateFrameInput()
         {
-            FrameInput = new FrameInput
+            frameInput = new FrameInput
             {
                 Direction = direction,
                 JumpPerformed = jumpPerformed,

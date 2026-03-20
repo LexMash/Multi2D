@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using Multi2D.Lab.Scripts.Data;
+using R3;
 using UnityEngine;
 
 namespace Multi2D.Data
@@ -8,7 +9,6 @@ namespace Multi2D.Data
         private readonly ReactiveProperty<Vector2> position;
         private readonly ReactiveProperty<Vector2> velocity;
         private readonly ReactiveProperty<int> lookDirection;
-        private readonly ReactiveProperty<int> coins;
         private readonly ReactiveProperty<PlayerStateType> state;
         private readonly ReactiveProperty<bool> isAttack;
 
@@ -16,9 +16,10 @@ namespace Multi2D.Data
         public ReadOnlyReactiveProperty<Vector2> Position => position;
         public ReadOnlyReactiveProperty<Vector2> Velocity => velocity;
         public ReadOnlyReactiveProperty<int> LookDirection => lookDirection;
-        public ReadOnlyReactiveProperty<int> Coins => coins;
         public ReadOnlyReactiveProperty<PlayerStateType> State => state;
         public ReadOnlyReactiveProperty<bool> IsAttack => isAttack;
+
+        public HitData LastHitData;
 
         public PlayerModel(int id, Vector2 initialPosition, int initialLookDirection)
         {
@@ -27,32 +28,8 @@ namespace Multi2D.Data
             position = new(initialPosition);
             velocity = new(Vector2.zero);
             lookDirection = new(initialLookDirection);
-            coins = new(0);
             state = new(PlayerStateType.None);
             isAttack = new(false);         
-        }
-
-        public void AddCoins(int amount) => coins.Value += amount;
-
-        public bool TryRemoveCoins(int amount, out int removed)
-        {
-            removed = amount;
-            int currentValue = coins.CurrentValue;
-
-            if (currentValue == 0) 
-                return false;
-
-            if (currentValue < amount)
-            {
-                removed = currentValue;
-                coins.Value = 0;
-            }
-            else
-            {
-                coins.Value = currentValue - amount;
-            }
-
-            return true;
         }
 
         public void SetState(PlayerStateType newState) => state.Value = newState;

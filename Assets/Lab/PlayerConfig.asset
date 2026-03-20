@@ -23,7 +23,7 @@ MonoBehaviour:
   <JumpTimeToApex>k__BackingField: 0.5
   <FallGravityModifier>k__BackingField: 2
   <JumpBuffer>k__BackingField: 0.125
-  <FireRateBPM>k__BackingField: 80
+  <FireRateBPM>k__BackingField: 120
   <BulletSpeed>k__BackingField: 20
   <CollisionDetectionConfig>k__BackingField:
     <ForwardOverlapBoxSize>k__BackingField: {x: 0.05, y: 1.6}
@@ -59,3 +59,4 @@ MonoBehaviour:
     <ColliderContactCaptureLayers>k__BackingField:
       serializedVersion: 2
       m_Bits: 1280
+  <HurtTime>k__BackingField: 1

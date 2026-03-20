@@ -1,11 +1,11 @@
-﻿using Multi2D.Assets.Lab.Scripts.Entities;
-using Multi2D.Data;
+﻿using Multi2D.Data;
 using Multi2D.Data.Collisions;
 using Multi2D.Extensions;
 using R3;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Multi2D
@@ -20,6 +20,7 @@ namespace Multi2D
         private readonly CollisionDetectionConfig config;
         private readonly PlayerModel model;
         private readonly Rigidbody2D playerRb;
+        private readonly NetworkVariable<int> collisionSync;
         private readonly Collider2D playerCollider;
         private readonly LayerMask overlapMask;
 
@@ -27,7 +28,7 @@ namespace Multi2D
         private int directionMultiplier;
 
         public event Action<Collision2D> OnBulletCollision = delegate { };
-        public event Action<CoinView> OnCoinsCollision = delegate { };
+        public event Action OnCoinsCollision = delegate { };
 
         public CollisionDetectionMask DetectedMask => detectedMask;
 
@@ -35,17 +36,19 @@ namespace Multi2D
             ObservableCollisionsDetector monoDetector, 
             CollisionDetectionConfig config,
             PlayerModel model,
-            Rigidbody2D playerRb)
+            Rigidbody2D playerRb,
+            NetworkVariable<int> collisionSync)
         {
             this.monoDetector = monoDetector;
             this.config = config;
             this.model = model;
             this.playerRb = playerRb;
+            this.collisionSync = collisionSync;
             playerCollider = monoDetector.Collider;
             overlapMask = config.OverlapMask;
 
             Physics2D.queriesHitTriggers = false;
-            Physics2D.queriesStartInColliders = false;
+            Physics2D.queriesStartInColliders = true;
         }
 
         public void Initialize()
@@ -71,8 +74,23 @@ namespace Multi2D
 #endif
         }
 
-        public void ExcludeLayers(LayerMask layerMask) => playerCollider.excludeLayers ^= layerMask;
-        public void ResetExcludeLayers() => playerCollider.excludeLayers = default;
+        public void ExcludeBulletAndCoinsLayers()
+        {
+            playerCollider.excludeLayers = config.ColliderContactCaptureLayers;
+            SyncLayerMaskWithServerRpc(config.ColliderContactCaptureLayers);
+        }
+
+        public void ExcludeLayers(LayerMask layerMask)
+        {
+            playerCollider.excludeLayers ^= layerMask;
+            SyncLayerMaskWithServerRpc(layerMask);
+        }
+
+        public void ResetExcludeLayers()
+        {
+            playerCollider.excludeLayers = default;
+            SyncLayerMaskWithServerRpc(default);
+        }
 
         public void UpdateCollisionData()
         {
@@ -95,6 +113,10 @@ namespace Multi2D
             topDetectionLayerMap.Clear();
             subscriptions.Dispose();
         }
+
+
+        //[Rpc(SendTo.Server)]
+        private void SyncLayerMaskWithServerRpc(LayerMask layerMask) => collisionSync.Value = layerMask;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ResetMask() => detectedMask = CollisionDetectionMask.None;
@@ -148,12 +170,12 @@ namespace Multi2D
             }
         }
 
-        public void CorrectYPosition()
+        private void CorrectYPosition()//MOVE TO COLLISION HANDLER
         {
             RaycastHit2D hit = Physics2D.BoxCast(
                 GetOverlapBoxOrigin(config.BottomOverlapOffset) + Vector2.up * 0.15f, config.BottomOverlapBoxSize, 0f, Vector2.down, 0.25f, config.ForwardMask); //TODO refactor
 
-            if (hit)
+            if (hit) //MOVE TO COLLISION HANDLER
             {
                 var playerPosition = playerRb.position;
                 var point = hit.point;
@@ -190,16 +212,12 @@ namespace Multi2D
         private Vector2 GetOverlapBoxOrigin(Vector2 offset) 
             => playerRb.position + new Vector2(offset.x * directionMultiplier, offset.y);
 
-        private void OnTriggerEnter(Collider2D other)
-        {
-            OnCoinsCollision.Invoke(other.GetComponent<CoinView>());
-            Debug.Log($"Coin collected");
-        }
+        private void OnTriggerEnter(Collider2D other) => OnCoinsCollision.Invoke();
 
-        private void OnCollisionEnter(Collision2D collision)
+        private void OnCollisionEnter(Collision2D collision) //TODO REMOVE
         {
-            OnBulletCollision.Invoke(collision);
-            Debug.Log($"Bullet hits");
+            //OnBulletCollision.Invoke(collision);
+            //Debug.Log($"Bullet hits - userID {id}");
         }
     }
 }

@@ -21,12 +21,16 @@ namespace Multi2D
         [field: SerializeField, Range(1f, 3f)] public float FallGravityModifier { get; private set; } = 1f;
         [field: SerializeField, Range(0.1f, 0.5f)] public float JumpBuffer { get; private set; } = 0.3f;
 
+
         [field: Space(20), Header("Attack")]
         [field: SerializeField, Range(60, 200)] public int FireRateBPM { get; private set; } = 80;       
-        [field: SerializeField, Range(5f, 20f)] public float BulletSpeed { get; private set; } = 15f;
+        [field: SerializeField, Range(5f, 40f)] public float BulletSpeed { get; private set; } = 15f;
 
         [field: Space(20), Header("Collisions")]
         [field: SerializeField] public CollisionDetectionConfig CollisionDetectionConfig { get; private set; }
+
+        [field: Space(20), Header("Hurt")]
+        [field: SerializeField] public float HurtTime { get; private set; } = 2f;
 
         public float InitialJumpGravity => (2 * JumpHeight) / (JumpTimeToApex * JumpTimeToApex); 
     }
