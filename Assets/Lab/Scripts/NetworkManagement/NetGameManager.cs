@@ -102,8 +102,10 @@ namespace Multi2D.Lab.Scripts.NetworkManagement
 
         [Rpc(SendTo.ClientsAndHost)]
         private void OnTimeChangedRpc(float previousValue, float newValue) => timePanel.UpdateValue(newValue);
+
         [Rpc(SendTo.ClientsAndHost)]
         private void UpdateCoins1Rpc(int previousValue, int newValue) => coinPanels[0].UpdateValue(newValue);
+
         [Rpc(SendTo.ClientsAndHost)]
         private void UpdateCoins2Rpc(int previousValue, int newValue) => coinPanels[1].UpdateValue(newValue);
 

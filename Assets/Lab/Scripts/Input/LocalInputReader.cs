@@ -4,10 +4,9 @@ using UnityEngine.InputSystem;
 
 namespace Multi2D
 {
-    public class LocalInputReader : IInputReader, IDisposable
+    public class InputReader : IInputReader, IDisposable
     {
         private readonly LocalMultiplayerInput input;
-
         private Vector2 direction;
         private bool jumpPerformed;
         private bool attackPerformed;
@@ -17,7 +16,7 @@ namespace Multi2D
 
         public FrameInput FrameInput => frameInput;
 
-        public LocalInputReader(LocalMultiplayerInput input)
+        public InputReader(LocalMultiplayerInput input)
         {
             this.input = input;
 
@@ -43,10 +42,10 @@ namespace Multi2D
         }
 
         public void Enable() => input.Enable();
+
         public void Disable()
         {
             input.Disable();
-
             ResetJumpInput();
             direction = Vector2.zero;
             attackPerformed = false;
@@ -73,10 +72,13 @@ namespace Multi2D
         }
 
         private void OnMove(InputAction.CallbackContext ctx) => direction = ctx.ReadValue<Vector2>();
+
         private void OnJump(InputAction.CallbackContext context)
         {
             jumpPerformed = context.performed;
-            jumpPerformedTime = jumpPerformed ? Time.time : 0;
+
+            if (jumpPerformed)
+                jumpPerformedTime = Time.time;
         }
 
         private void OnAttack(InputAction.CallbackContext context) => attackPerformed = context.performed;

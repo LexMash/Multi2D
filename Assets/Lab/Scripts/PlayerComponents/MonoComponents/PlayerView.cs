@@ -74,7 +74,7 @@ namespace Multi2D
 
             VectorsExtensions.AxisInputTreshold = PlayerConfig.AxisInputTreshold;
 
-            inputReader = new LocalInputReader(new LocalMultiplayerInput());
+            inputReader = new InputReader(new LocalMultiplayerInput());
             inputReader.Enable();
 
             stateChangeRequester = new();
