@@ -13,6 +13,7 @@ namespace Multi2D
         public void Setup(Sprite icon, string name)
         {
             image.sprite = icon;
+            Define(false);
             nameLabel.SetText(name);
         }
 

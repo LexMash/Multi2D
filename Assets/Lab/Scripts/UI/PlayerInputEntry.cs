@@ -8,7 +8,7 @@ namespace Multi2D
         private InputDevice inputDevice; 
         private InputUser inputUser;
         public readonly LocalMultiplayerInput InputActions = new();
-        public string DeviceName => inputDevice.name;
+        public string DeviceName => inputDevice.displayName;
 
         public PlayerInputEntry(InputDevice device)
         {

@@ -13,31 +13,32 @@ namespace Multi2D
         private readonly Dictionary<InputDevice, IndefiniteInputWrapper> indefiniteMap;
         private readonly Dictionary<IndefiniteInputWrapper, PlayerInputEntryDefinition> definitionMap;
         private readonly PlayerControllDefinitionScreenView view;
-        private readonly int minInputs;
+        private readonly int maxPlayers;
         private readonly int maxInputs;
         private int definedInputs;
 
         public event Action OnAllPlayersDefined;
 
-        public PlayerControllDefinitionScreen(PlayerControllDefinitionScreenView view, int minInputs, int maxInputs)
+        public PlayerControllDefinitionScreen(PlayerControllDefinitionScreenView view, int maxPlayers, int maxInputs)
         {
             this.view = view;
-            this.minInputs = minInputs;
+            this.maxPlayers = maxPlayers;
             this.maxInputs = maxInputs;
-            indefiniteMap = new Dictionary<InputDevice, IndefiniteInputWrapper>(minInputs);
-            definitionMap = new Dictionary<IndefiniteInputWrapper, PlayerInputEntryDefinition>(minInputs);
+            indefiniteMap = new Dictionary<InputDevice, IndefiniteInputWrapper>(maxPlayers);
+            definitionMap = new Dictionary<IndefiniteInputWrapper, PlayerInputEntryDefinition>(maxPlayers);
         }
 
         public void Init()
         {
-            view.BuildView(minInputs, maxInputs);
+            view.BuildView(maxPlayers, maxInputs);
 
             ReadOnlyArray<InputDevice> devices = InputSystem.devices;
-
-            for (int i = IndefinitePlayerNumber; i < devices.Count; i++)
+            int count = devices.Count;
+            for (int i = 0; i < count; i++)
             {
-                InputDevice device = InputSystem.devices[i];
-                AddDevice(device);
+                InputDevice device = devices[i];
+                if (device.enabled)
+                    AddDevice(device);
             }
 
             InputSystem.onDeviceChange += OnDeviceChanged;
@@ -66,9 +67,8 @@ namespace Multi2D
                 AddDevice(device);
             }
 
-            if (change == InputDeviceChange.Removed)
+            if (change == InputDeviceChange.Removed && indefiniteMap.TryGetValue(device, out IndefiniteInputWrapper entry))
             {
-                IndefiniteInputWrapper entry = indefiniteMap[device];
                 entry.ChoiceDisable();
                 indefiniteMap.Remove(device);
                 definitionMap.Remove(entry);
@@ -78,10 +78,14 @@ namespace Multi2D
 
         private void AddDevice(InputDevice device)
         {
+            if (!IsDeviceValid(device))
+                return;
+
             IndefiniteInputWrapper indefinite = new(new PlayerInputEntry(device), OnIndexChange, OnDone);
-            indefiniteMap.Add(device, indefinite);
+            indefiniteMap.Add(device, indefinite);         
             PlayerInputEntryDefinition definition = new() { DeviceName = device.name, PlayerNumber = IndefinitePlayerNumber, IsDefined = false };
             view.AddInputDeviceDefinition(definition, device.GetInputType());
+            definitionMap.Add(indefinite, definition);
             indefinite.ChoiceEnable();
         }
 
@@ -95,7 +99,11 @@ namespace Multi2D
                 return;
             }
 
-            definition.PlayerNumber = Mathf.Clamp(definition.PlayerNumber + sign, IndefinitePlayerNumber, minInputs);
+            int newNumber = Mathf.Clamp(definition.PlayerNumber + sign, IndefinitePlayerNumber, maxPlayers);
+            if (newNumber == definition.PlayerNumber)
+                return;
+
+            definition.PlayerNumber = newNumber;
             definitionMap[indefinite] = definition;
             view.UpdateDeviceDefinition(definition);
         }
@@ -115,7 +123,7 @@ namespace Multi2D
                     if (!pcd.IsDefined)
                         continue;
 
-                    if (pcd.Equals(definition))
+                    if (pcd.PlayerNumber == definition.PlayerNumber)
                     {
                         //TODO some notification
                         Debug.Log($"Entry {indefinite.Entry.DeviceName} already defined. Player index {pcd.PlayerNumber}");
@@ -130,11 +138,14 @@ namespace Multi2D
                 definedInputs--;
             }
 
+            Debug.Log($"Player {definition.PlayerNumber} is {(isDefined ? "defined" : "undefined")}");
+            Debug.Log($"Defined inputs: {definedInputs}/{maxPlayers}");
+
             definition.IsDefined = !isDefined;
             definitionMap[indefinite] = definition;
             view.UpdateDeviceDefinition(definition);
 
-            if (definedInputs == minInputs)
+            if (definedInputs == maxPlayers)
             {
                 foreach (var entry in indefiniteMap.Values)
                     entry.ChoiceDisable();
@@ -142,6 +153,11 @@ namespace Multi2D
                 OnAllPlayersDefined?.Invoke();
                 Debug.Log("All player slots are defined.");
             }
+        }
+
+        private bool IsDeviceValid(InputDevice device) //TODO: Add more checks
+        {
+            return device.GetType().BaseType != typeof(Mouse);   
         }
 
         private class IndefiniteInputWrapper : IDisposable
@@ -154,9 +170,12 @@ namespace Multi2D
             public IndefiniteInputWrapper(PlayerInputEntry entry, Action<IndefiniteInputWrapper, int> onIndexChangeRequest, Action<IndefiniteInputWrapper> onDefine)
             {
                 Entry = entry;
+                this.onDefine = onDefine;
+                this.onIndexChangeRequest = onIndexChangeRequest;
+
                 controll = entry.InputActions.PlayerControll;
                 controll.Move.performed += ChoicePerformed;
-                controll.Attack.performed += DonePerformed;
+                controll.Attack.performed += DonePerformed;     
             }
 
             public void ChoiceEnable()

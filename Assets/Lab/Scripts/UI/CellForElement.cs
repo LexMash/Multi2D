@@ -6,8 +6,8 @@ namespace Multi2D
     {
         public void SetElement(Transform element)
         {
-            transform.SetParent(element);
-            element.position = Vector3.zero;
+            element.SetParent(transform);
+            element.localPosition = Vector3.zero;
             element.localScale = Vector3.one;
         }
     }

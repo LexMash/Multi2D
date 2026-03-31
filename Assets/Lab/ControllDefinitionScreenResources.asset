@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b5286176938d354a874dd2c8b51d833, type: 3}
+  m_Name: ControllDefinitionScreenResources
+  m_EditorClassIdentifier: Assembly-CSharp::Multi2D.ControllDefinitionScreenResources
+  RowPrefab: {fileID: 7553011118344866359, guid: d678cb855c17bb84ebedecf1dc20d383, type: 3}
+  CellPrefab: {fileID: 7304220322501273189, guid: 6525504dfc68d95449dd0f4961827fb4, type: 3}
+  DefinitionPrefab: {fileID: 8801826089615948561, guid: 598c650bb894d1d45900404ce5fa95c7, type: 3}
+  InputDeviceTypesIcons:
+  - Type: 1
+    Icon: {fileID: 1590541087, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
+  - Type: 2
+    Icon: {fileID: -132241201, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
+  - Type: 3
+    Icon: {fileID: 1629800253, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
+  - Type: 0
+    Icon: {fileID: 771901932, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
